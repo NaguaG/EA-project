@@ -1,0 +1,66 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: tvshow-service
+  cloud:
+    config:
+      fail-fast: true
+      retry:
+        max-attempts: 300
+        max-interval: 20000
+  config:
+    import: optional:configserver:http://${CONFIG_SERVER:localhost}:8090/
+  # Database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:55001/tvshow-service
+    username: postgres
+    password: postgrespw
+  # JPA properties
+  jpa:
+    properties:      
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    show-sql: true    
+    database: postgresql
+    # database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # open-in-view: false
+    # generate-ddl: true
+  sql:
+    init:
+      mode: always
+  zipkin:
+    base-url: http://${ZIPKIN_SERVER:localhost}:9411
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}    
+    consumer:      
+      group-id: group-1
+      auto-offset-reset: latest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${DISCOVERY_SERVER}:8761/eureka/
+
+keycloak:
+  enabled: true
+  realm: spring-realm
+  auth-server-url: http://${KEYCLOAK_SERVER:localhost}:8080/auth
+  public-client: true
+  bearer-only: true
+  credentials:
+    secret: bbc02d7c-d18e-4fb7-8882-23165e849810
+  ssl-required: none
+  resource: web-app
+  use-resource-role-mappings: true

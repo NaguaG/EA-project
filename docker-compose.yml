@@ -1,0 +1,136 @@
+version: '3.8'
+
+services:
+  zipkin:
+    extends:
+      file: docker-compose-base.yml
+      service: zipkin
+    depends_on:
+      - movie-db
+      - tvshow-db
+      - rating-db
+      - comment-db
+      - keycloak-db
+  config:
+    extends:
+      file: docker-compose-base.yml
+      service: config
+  discovery:
+    extends:
+      file: docker-compose-base.yml
+      service: discovery
+  keycloak:
+    extends:
+      file: docker-compose-base.yml
+      service: keycloak
+    depends_on:
+      - keycloak-db
+    links:
+      - keycloak-db:database
+  rabbitmq:
+    extends:
+      file: docker-compose-base.yml
+      service: rabbitmq
+  kafka:
+    platform: linux/amd64
+    extends:
+      file: docker-compose-base.yml
+      service: kafka
+    depends_on:
+      - zookeeper
+  zookeeper:
+    platform: linux/amd64
+    extends:
+      file: docker-compose-base.yml
+      service: zookeeper
+  kafka-ui:
+    platform: linux/amd64
+    extends:
+      file: docker-compose-base.yml
+      service: kafka-ui
+    depends_on:
+      - zookeeper
+      - kafka
+  user-service:
+    extends:
+      file: docker-compose-base.yml
+      service: user-service
+    depends_on:
+      - discovery
+      - zipkin
+      - config
+      - keycloak
+  movie-service:
+    extends:
+      file: docker-compose-base.yml
+      service: movie-service
+    depends_on:
+      - discovery
+      - zipkin
+      - config
+      - keycloak
+  tvshow-service:
+    extends:
+      file: docker-compose-base.yml
+      service: tvshow-service
+    depends_on:
+      - discovery
+      - zipkin
+      - config
+      - keycloak
+  comment-service:
+    extends:
+      file: docker-compose-base.yml
+      service: comment-service
+    depends_on:
+      - discovery
+      - zipkin
+      - config
+      - keycloak
+  rating-service:
+    extends:
+      file: docker-compose-base.yml
+      service: rating-service
+    depends_on:
+      - discovery
+      - zipkin
+      - config
+      - keycloak
+  user-db:
+    extends:
+      file: docker-compose-base.yml
+      service: user-db
+  rating-db:
+    extends:
+      file: docker-compose-base.yml
+      service: rating-db
+  tvshow-db:
+    extends:
+      file: docker-compose-base.yml
+      service: tvshow-db
+  comment-db:
+    extends:
+      file: docker-compose-base.yml
+      service: comment-db
+  movie-db:
+    extends:
+      file: docker-compose-base.yml
+      service: movie-db
+  keycloak-db:
+    extends:
+      file: docker-compose-base.yml
+      service: keycloak-db
+  gateway:
+    extends:
+      file: docker-compose-base.yml
+      service: gateway
+    depends_on:
+      - discovery
+      - user-service
+      - zipkin
+      - config
+
+
+networks:
+  all:
+    driver: bridge

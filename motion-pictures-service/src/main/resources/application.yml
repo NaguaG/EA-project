@@ -1,0 +1,52 @@
+server:
+  port: 8086
+spring:
+  application:
+    name: motion-pictures-service
+  # Database
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:55001/motion-pictures
+    username: postgres
+    password: postgrespw
+  # JPA properties
+  jpa:
+    properties:      
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    show-sql: true    
+    database: postgresql
+    # database-platform: org.hibernate.dialect.PostgreSQLDialect
+    # open-in-view: false
+    # generate-ddl: true
+  sql:
+    init:
+      mode: always
+  kafka:
+    bootstrap-servers: ${KAFKA_SERVERS:localhost:9092}
+    consumer:
+      group-id: group-1
+      auto-offset-reset: latest
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+keycloak:
+  enabled: true
+  realm: spring-realm
+  auth-server-url: http://${KEYCLOAK_SERVER:localhost}:8080/auth
+  public-client: true
+  bearer-only: true
+  credentials:
+    secret: bbc02d7c-d18e-4fb7-8882-23165e849810
+  ssl-required: none
+  resource: web-app
+  use-resource-role-mappings: true
+
